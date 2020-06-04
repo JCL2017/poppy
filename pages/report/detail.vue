@@ -162,7 +162,7 @@ export default {
                 let expect = '-'
                 expect = this.handleFormat(this.data.detail[name].result[index].expect)
                 this.results.push({
-                  name,
+                  name: this.data.detail[name].name,
                   start: this.data.detail[name].start,
                   end: this.data.detail[name].end,
                   elapsed,
