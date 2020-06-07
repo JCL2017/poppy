@@ -32,7 +32,7 @@
       <el-menu-item index="/config/variable">
         变量配置
       </el-menu-item>
-      <el-menu-item v-if="keyword" index="/config/keyword">
+      <el-menu-item v-if="keyword" index="/keyword">
         关键字配置
       </el-menu-item>
       <el-menu-item index="/config/plugin">
