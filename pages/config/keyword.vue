@@ -1,96 +1,108 @@
 <template>
   <div>
     <el-row :gutter="20">
-      <el-col :span="3">
-        <TeamProjectCascader v-on:selectedTeamProject="selectedTeamProject" />
+      <el-col :span="12">
+        <el-card class="box-card">
+          <editor
+            ref="keyword"
+            v-model="keyword"
+            @init="keywordInit"
+            lang="python"
+            theme="twilight"
+            height="480"
+          />
+        </el-card>
+        <el-row class="button">
+          <el-col
+            :span="3"
+            :offset="18"
+          >
+            <el-button
+              @click="debugDialogVisible=true"
+              icon="el-icon-video-play"
+              type="primary"
+              size="mini"
+            >
+              调试
+            </el-button>
+          </el-col>
+          <el-col
+            :span="3"
+          >
+            <el-button
+              @click="submitDialogVisible=true"
+              icon="el-icon-plus"
+              type="primary"
+              size="mini"
+            >
+              创建
+            </el-button>
+          </el-col>
+        </el-row>
       </el-col>
-      </el-col>
-      <el-col
-        :span="3"
-        :offset="15"
-      >
-        <el-button
-          @click="handleDebug"
-          icon="el-icon-video-play"
-          type="primary"
-        >
-          调试
-        </el-button>
-      </el-col>
-      <el-col
-        :span="3"
-      >
-        <el-button
-          @click="handleAdd"
-          icon="el-icon-plus"
-          type="primary"
-        >
-          创建
-        </el-button>
+      <el-col :span="12">
+        <el-card class="box-card">
+          <p class="result">{{result}}</p>
+        </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <editor
-          ref="keyword"
-          v-model="keyword"
-          @init="keywordInit"
-          lang="python"
-          theme="twilight"
-          height="480"
-        />
-      </el-col>
-      <el-col :span="12">
-        <editor
-          ref="mock"
-          v-model="mock"
-          @init="mockInit"
-          lang="json"
-          theme="twilight"
-          height="480"
-        />
-      </el-col>
-    </el-row>
+    <el-dialog
+      :visible.sync="debugDialogVisible"
+      title="请添加调用表达式"
+      width="30%">
+      <el-input v-model="expression" placeholder="${function_name(parameter, ...)}" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="debugDialogVisible=false" size="mini">取 消</el-button>
+        <el-button @click="handleDebug" type="primary" size="mini">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="submitDialogVisible"
+      title="请添加调关键字功能介绍"
+      width="30%">
+      <el-input v-model="description" type="textarea" placeholder="请填写关键字功能描述..." />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="submitDialogVisible=false" size="mini">取 消</el-button>
+        <el-button @click="handleSubmit" type="primary" size="mini">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import TeamProjectCascader from '~/components/TeamProjectCascader.vue'
-
 export default {
   components: {
-    TeamProjectCascader,
     editor: require('vue2-ace-editor')
   },
   data () {
     return {
-      team: '',
-      project: '',
       keyword: '# 这里使用python写自定义关键字',
-      mock: '{"status": 0, "message": "ok", "data": {}}'
+      result: '点击调试按钮，这里展示执行结果。',
+      expression: '',
+      description: '',
+      debugDialogVisible: false,
+      submitDialogVisible: false
     }
   },
   mounted () {
     this.setKeywordEditor()
-    this.setMockEditor()
   },
   methods: {
     handleDebug () {
+      this.debugDialogVisible = false
       this.$axios({
         url: '/api/v1/keyword/debug',
         method: 'post',
         data: JSON.stringify({
-          'team': this.team,
-          'project': this.project,
           'keyword': this.keyword,
-          'mock': this.mock
+          'expression': this.expression
         }),
         headers: {
           'Content-Type': 'application/json;'
         }
       }).then((res) => {
         if (res.data.status === 0) {
-          this.mock = JSON.stringify(res.data.data)
+          this.result = JSON.stringify(res.data.data)
           this.$message({
             type: 'success',
             message: res.data.message,
@@ -111,30 +123,49 @@ export default {
         })
       })
     },
-    handleAdd (value) {
-    },
-    selectedTeamProject (value) {
-      this.team = value.team
-      this.project = value.project
+    handleSubmit (value) {
+      this.submitDialogVisible = false
+      this.$axios({
+        url: '/api/v1/keyword/create',
+        method: 'post',
+        data: JSON.stringify({
+          'keyword': this.keyword,
+          'description': this.description
+        }),
+        headers: {
+          'Content-Type': 'application/json;'
+        }
+      }).then((res) => {
+        if (res.data.status === 0) {
+          this.result = JSON.stringify(res.data.data)
+          this.$message({
+            type: 'success',
+            message: res.data.message,
+            center: true
+          })
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message,
+            center: true
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '服务器偷懒了！',
+          center: true
+        })
+      })
     },
     keywordInit () {
       require('brace/ext/language_tools')
       require('brace/mode/python')
       require('brace/mode/sql')
-      require('brace/theme/twilight')
-    },
-    mockInit () {
-      require('brace/ext/language_tools')
-      require('brace/mode/json')
-      require('brace/theme/twilight')
+      require('brace/theme/clouds')
     },
     setKeywordEditor () {
       const editor = this.$refs.keyword.editor
-      editor.getSession().setTabSize(4)
-      editor.setFontSize(18)
-    },
-    setMockEditor () {
-      const editor = this.$refs.mock.editor
       editor.getSession().setTabSize(4)
       editor.setFontSize(18)
     }
@@ -143,5 +174,11 @@ export default {
 </script>
 
 <style scoped>
+.button {
+  padding-top: 20px;
+}
 
+.result {
+  min-height: 480px;
+}
 </style>
