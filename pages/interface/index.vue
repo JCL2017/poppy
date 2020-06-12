@@ -220,6 +220,7 @@ export default {
     },
     runCase () {
       const params = {
+        trigger: 'clover',
         report: this.report,
         ...this.column
       }
