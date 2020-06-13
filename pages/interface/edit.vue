@@ -337,6 +337,16 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
+        <el-tab-pane label="高级设置" name="six">
+          <el-form ref="form" label-width="80px">
+            <el-form-item label="超时时间">
+              <el-input v-model="timeout" />
+            </el-form-item>
+            <el-form-item label="重试次数">
+              <el-input v-model="retry" />
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
       </el-tabs>
     </el-row>
     <el-row>
