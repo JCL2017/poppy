@@ -430,6 +430,8 @@ export default {
         'mode': 'raw',
         'data': ''
       },
+      retry: 1,
+      timeout: 120,
       assert: [{
         extractor: '',
         expression: '',
@@ -671,7 +673,9 @@ export default {
           params: this.translateData(this.params),
           body: this.translateBody(this.body),
           verify: this.translateVerify(this.assert),
-          extract: this.translateExtract(this.extract)
+          extract: this.translateExtract(this.extract),
+          timeout: this.timeout,
+          retry: this.retry
         }),
         headers: {
           'Content-Type': 'application/json;'
@@ -696,6 +700,8 @@ export default {
           this.assert = this.untranslateVerify(res.data.data.verify)
           this.extract = this.untranslateExtract(res.data.data.extract)
           this.response = res.data.data.response
+          this.timeout = res.data.data.timeout
+          this.retry = res.data.data.retry
         } else {
           this.$message({
             type: 'info',
