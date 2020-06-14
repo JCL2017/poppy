@@ -361,7 +361,7 @@
           <pre><code>{{ response.header }}</code></pre>
         </el-tab-pane>
         <el-tab-pane label="响应Cookie" name="responseCookie">
-          Cookie
+          <pre><code>{{ cookie }}</code></pre>
         </el-tab-pane>
       </el-tabs>
     </el-row>
@@ -417,6 +417,7 @@ export default {
         value: 'raw'
       }],
       response: '',
+      cookie: '',
       id: '',
       team: '',
       project: '',
@@ -630,6 +631,7 @@ export default {
           this.host = res.data.data.host
           this.path = res.data.data.path
           this.method = res.data.data.method
+          this.cookie = this.getcookie(res.data.data.response.header)
           this.header = this.untranslateData(res.data.data.header)
           this.params = this.untranslateData(res.data.data.params)
           this.body = this.untranslateBody(res.data.data.body)
@@ -694,6 +696,7 @@ export default {
           this.host = res.data.data.host
           this.path = res.data.data.path
           this.method = res.data.data.method
+          this.cookie = this.getcookie(res.data.data.response.header)
           this.header = this.untranslateData(res.data.data.header)
           this.params = this.untranslateData(res.data.data.params)
           this.body = this.untranslateBody(res.data.data.body)
@@ -731,6 +734,15 @@ export default {
       for (const i in data) {
         if (data[i].key !== '') {
           result += data[i].key + ':' + data[i].value + '\n'
+        }
+      }
+      return result
+    },
+    getcookie (data) {
+      let result = ''
+      for (const key in data) {
+        if (key.match('Cookie')) {
+          result = key + ':' + data[key] + '\n'
         }
       }
       return result
