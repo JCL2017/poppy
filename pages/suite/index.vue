@@ -95,12 +95,19 @@
       <el-table-column
         fixed="right"
         label="操作"
-        width="200"
+        width="300"
         align="center"
       >
         <template slot-scope="scope">
+          <el-switch
+              v-model="value"
+              active-color="#13ce66"
+              inactive-color="#999999"
+              active-value="true"
+              inactive-value="false">
+            </el-switch>
           <el-button
-            @click="handleRun(scope.$index, scope.row)"
+            @click="handleRun(scope.$index, scope.row,value)"
             size="mini"
             icon="el-icon-caret-right"
             type="primary"
@@ -158,6 +165,7 @@ export default {
   },
   data () {
     return {
+      value: 'true',
       data: [],
       total: 0,
       limit: 10,
@@ -231,9 +239,16 @@ export default {
         center: true
       })
     },
-    handleRun (index, row) {
-      this.dialogFormVisible = true
-      this.column = row
+    handleRun (index, row, value) {
+      if (value === 'true') {
+        this.dialogFormVisible = true
+        this.column = row
+      } else {
+        this.$message({
+          type: 'warning',
+          message: '套件已禁用，请先开启'
+        })
+      }
     },
     runCase () {
       const params = {
