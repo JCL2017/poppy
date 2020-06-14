@@ -45,6 +45,9 @@
     <el-menu-item index="/report">
       查看报告
     </el-menu-item>
+    <el-menu-item index="/dashboard">
+      数据看板
+    </el-menu-item>
     <el-menu-item v-if="join" index="keep">
       <a href="https://github.com/taoyanli0808/clover" target="_blank">
         加入我们
