@@ -200,11 +200,19 @@ export default {
         }
       }).then((res) => {
         if (res.data.status === 0) {
-          this.$message({
-            type: 'success',
-            message: '修改成功!',
-            center: true
-          })
+          if (row.status) {
+            this.$message({
+              type: 'success',
+              message: res.data.message,
+              center: true
+            })
+          } else {
+            this.$message({
+              type: 'warning',
+              message: res.data.message,
+              center: true
+            })
+          }
         } else {
           this.$message({
             type: 'warning',
