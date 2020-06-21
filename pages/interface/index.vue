@@ -73,25 +73,23 @@
         align="center"
       >
         <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.status"
-              active-color="#13ce66"
-              inactive-color="#999999"
-              active-value= "0"
-              inactive-value= "1"
-              @change="changeSwitch(scope.row)">
-            </el-switch>
-         <el-tooltip :content="'当前状态为可运行'" placement="top">
-          <el-button
-            @click="handleRun(scope.$index, scope.row)"
-            size="mini"
-            icon="el-icon-video-play"
-            type="primary"
-            :disabled="scope.row.status==1 "
-          >
-            运行
-          </el-button>
-         </el-tooltip>
+          <el-switch
+            v-model="scope.row.status"
+            @change="changeSwitch(scope.row)"
+            active-color="#13ce66"
+            inactive-color="#999999"
+          />
+          <el-tooltip :content="'当前状态为可运行'" placement="top">
+            <el-button
+              @click="handleRun(scope.$index, scope.row)"
+              :disabled="scope.row.status===false"
+              size="mini"
+              icon="el-icon-video-play"
+              type="primary"
+            >
+              运行
+            </el-button>
+          </el-tooltip>
           <el-button
             @click="handleEdit(scope.$index, scope.row)"
             size="mini"
@@ -152,8 +150,6 @@ export default {
   },
   data () {
     return {
-      isAble: false,
-      status: '0',
       data: [],
       total: 0,
       limit: 10,
@@ -192,11 +188,6 @@ export default {
       this.refresh()
     },
     changeSwitch (row) {
-      if (row.status === '0') {
-        row.isAble = false
-      } else {
-        row.isAble = true
-      }
       this.$axios({
         url: '/api/v1/interface/switch',
         method: 'post',
