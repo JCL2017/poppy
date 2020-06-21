@@ -77,8 +77,8 @@
               v-model="scope.row.status"
               active-color="#13ce66"
               inactive-color="#999999"
-              active-value= "1"
-              inactive-value= "0"
+              active-value= "0"
+              inactive-value= "1"
               @change="changeSwitch(scope.row)">
             </el-switch>
          <el-tooltip :content="'当前状态为可运行'" placement="top">
@@ -87,7 +87,7 @@
             size="mini"
             icon="el-icon-video-play"
             type="primary"
-            :disabled="scope.row.status==0 "
+            :disabled="scope.row.status==1 "
           >
             运行
           </el-button>
@@ -153,7 +153,7 @@ export default {
   data () {
     return {
       isAble: false,
-      status: '1',
+      status: '0',
       data: [],
       total: 0,
       limit: 10,
@@ -192,7 +192,7 @@ export default {
       this.refresh()
     },
     changeSwitch (row) {
-      if (row.status === '1') {
+      if (row.status === '0') {
         row.isAble = false
       } else {
         row.isAble = true
