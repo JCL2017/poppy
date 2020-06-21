@@ -99,21 +99,25 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-switch
-              v-model="value"
+            <el-switch
+              v-model="scope.row.status"
               active-color="#13ce66"
               inactive-color="#999999"
-              active-value="true"
-              inactive-value="false">
+              active-value= "1"
+              inactive-value= "0"
+              @change="changeSwitch(scope.row)">
             </el-switch>
+         <el-tooltip :content="'当前状态为可运行'" placement="top">
           <el-button
-            @click="handleRun(scope.$index, scope.row,value)"
+            @click="handleRun(scope.$index, scope.row)"
             size="mini"
-            icon="el-icon-caret-right"
+            icon="el-icon-video-play"
             type="primary"
+            :disabled="scope.row.status==0 "
           >
             运行
           </el-button>
+         </el-tooltip>
           <el-button
             @click="handleDelete(scope.$index, scope.row)"
             size="mini"
@@ -165,6 +169,8 @@ export default {
   },
   data () {
     return {
+      isAble: false,
+      status: '1',
       value: 'true',
       data: [],
       total: 0,
@@ -187,6 +193,45 @@ export default {
     createSuite () {
       this.$router.push({
         path: '/suite/create'
+      })
+    },
+    changeSwitch (row) {
+      if (row.status === '1') {
+        row.isAble = false
+      } else {
+        row.isAble = true
+      }
+      this.$axios({
+        url: '/api/v1/suite/switch',
+        method: 'post',
+        data: JSON.stringify({
+          id_list: row.id,
+          status: row.status
+        }),
+        headers: {
+          'Content-Type': 'application/json;'
+        }
+      }).then((res) => {
+        if (res.data.status === 0) {
+          this.$message({
+            type: 'success',
+            message: '修改成功!',
+            center: true
+          })
+        } else {
+          this.$message({
+            type: 'warning',
+            message: res.data.message,
+            center: true
+          })
+        }
+        this.dialogFormVisible = false
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '修改开关状态时发生错误!',
+          center: true
+        })
       })
     },
     refresh () {
@@ -240,15 +285,8 @@ export default {
       })
     },
     handleRun (index, row, value) {
-      if (value === 'true') {
-        this.dialogFormVisible = true
-        this.column = row
-      } else {
-        this.$message({
-          type: 'warning',
-          message: '套件已禁用，请先开启'
-        })
-      }
+      this.dialogFormVisible = true
+      this.column = row
     },
     runCase () {
       const params = {
