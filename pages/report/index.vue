@@ -48,6 +48,11 @@
         width="120"
       />
       <el-table-column
+        prop="interface.skiped"
+        label="跳过用例个数"
+        width="120"
+      />
+      <el-table-column
         prop="interface.verify"
         label="断言数量"
         width="120"
