@@ -150,7 +150,7 @@ export default {
             this.success = this.data.interface.passed
             this.failed = this.data.interface.failed
             this.error = this.data.interface.error
-            this.skiped = this.data.interface.skiped
+            this.skip = this.data.skip
             this.percent = this.data.interface.percent.toFixed(0) + '%'
             // 这里是报告的详细数据。
             for (const name in this.data.detail) {

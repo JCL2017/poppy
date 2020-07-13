@@ -1,75 +1,98 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="4">
-        <TeamProjectCascader v-on:selectedTeamProject="selectedTeamProject" />
-      </el-col>
       <el-col :span="2" :offset="18">
-        <!-- <el-button
+        <el-button
           @click="createSuite"
           type="primary"
+          size="small"
           plain
         >
           创建套件
-        </el-button> -->
+        </el-button>
       </el-col>
     </el-row>
     <el-table
       :data="data"
-      @selection-change="handleSelectionChange"
       v-loading="loading"
       element-loading-text="拼命加载中"
-      style="width: 100%"
+      style="width: 100%;"
     >
       <el-table-column
         prop="id"
         label="ID"
-        width="80"
+        width="50"
+        align="ceDnter"
       />
       <el-table-column
         prop="team"
         label="团队"
         width="180"
+        align="center"
       />
       <el-table-column
         prop="project"
         label="项目"
         width="180"
+        align="center"
+      />
+      <el-table-column
+        prop="project"
+        label="项目"
+        width="180"
+        align="center"
       />
       <el-table-column
         prop="name"
+        label="名称"
+        width="180"
+        align="center"
+      />
+      <el-table-column
+        prop="type"
+        label="类型"
+        width="180"
+        align="center"
+      />
+      <el-table-column
+        prop="cases"
         label="用例"
         width="180"
+        align="center"
       />
-      <el-table-column
-        prop="method"
-        label="方法"
-        width="80"
-      />
-      <el-table-column
-        prop="host"
-        label="域名"
+      <!-- <el-table-column
+        label="统计"
         width="180"
-      />
-      <el-table-column
-        prop="path"
-        label="路径"
-        width="180"
-      />
+        align="center"
+      >
+        <template slot-scope="scope">
+          <el-button
+            @click="handleHistory(scope.$index, scope.row)"
+            size="mini"
+            icon="el-icon-s-data"
+            type="primary"
+            plain
+          >
+            查看
+          </el-button>
+        </template>
+      </el-table-column> -->
       <el-table-column
         prop="created"
         label="创建时间"
         width="180"
+        align="center"
       />
       <el-table-column
         prop="updated"
         label="更新时间"
         width="180"
+        align="center"
       />
       <el-table-column
         fixed="right"
         label="操作"
-        width="400"
+        width="300"
         align="center"
       >
         <template slot-scope="scope">
@@ -91,14 +114,6 @@
             </el-button>
           </el-tooltip>
           <el-button
-            @click="handleEdit(scope.$index, scope.row)"
-            size="mini"
-            icon="el-icon-edit"
-            type="warning"
-          >
-            编辑
-          </el-button>
-          <el-button
             @click="handleDelete(scope.$index, scope.row)"
             size="mini"
             icon="el-icon-delete"
@@ -115,7 +130,7 @@
       background
       layout="total, prev, pager, next, jumper"
     />
-    <el-dialog :visible.sync="dialogFormVisible" title="运行接口">
+    <el-dialog :visible.sync="dialogFormVisible" title="运行套件">
       <el-form>
         <el-form-item label="测试报告名称">
           <el-input v-model="report" autocomplete="off" />
@@ -141,20 +156,25 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
-import TeamProjectCascader from '~/components/TeamProjectCascader.vue'
+
 export default {
-  components: {
-    TeamProjectCascader
+  props: {
+    team: {
+      type: String,
+      default: ''
+    },
+    project: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
+      value: 'true',
       data: [],
       total: 0,
       limit: 10,
       page: 0,
-      team: '',
-      project: '',
       cases: [],
       column: {},
       report: '',
@@ -165,30 +185,16 @@ export default {
   },
   mounted () {
     this.refresh()
-    document.body.ondrop = function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-    this.rowDrop()
   },
   methods: {
-    rowDrop () {
-      const tbody = document.querySelector('.el-table__body-wrapper tbody')
-      const _this = this
-      Sortable.create(tbody, {
-        onEnd ({ newIndex, oldIndex }) {
-          const currRow = _this.data.splice(oldIndex, 1)[0]
-          _this.data.splice(newIndex, 0, currRow)
-        }
+    createSuite () {
+      this.$router.push({
+        path: '/suite/create'
       })
-    },
-    handleCurrentChange (value) {
-      this.page = value - 1
-      this.refresh()
     },
     changeSwitch (row) {
       this.$axios({
-        url: '/api/v1/interface/switch',
+        url: '/api/v1/suite/switch',
         method: 'post',
         data: JSON.stringify({
           id_list: row.id,
@@ -241,11 +247,14 @@ export default {
         params.project = this.project
       }
       this.$axios
-        .post('/api/v1/interface/search', params)
-        . then((res) => {
+        .post('/api/v1/suite/search', params)
+        .then((res) => {
           if (res.data.status === 0) {
             this.total = res.data.total
             this.data = res.data.data
+            for (const i in this.data) {
+              this.data[i].cases = this.data[i].cases.join(',')
+            }
           } else {
             this.$message({
               type: 'error',
@@ -264,7 +273,18 @@ export default {
           this.loading = false
         })
     },
-    handleRun (index, row) {
+    handleCurrentChange (value) {
+      this.page = value - 1
+      this.refresh()
+    },
+    handleHistory (index, row) {
+      this.$message({
+        message: '开发者正在加班加点开发，很快就可以用喽！',
+        type: 'error',
+        center: true
+      })
+    },
+    handleRun (index, row, value) {
       this.dialogFormVisible = true
       this.column = row
     },
@@ -287,7 +307,7 @@ export default {
         }
       }
       this.$axios({
-        url: '/api/v1/interface/trigger',
+        url: '/api/v1/suite/trigger',
         method: 'post',
         data: JSON.stringify(params),
         headers: {
@@ -316,14 +336,6 @@ export default {
         })
       })
     },
-    handleEdit (index, row) {
-      this.$router.push({
-        path: '/interface/edit',
-        query: {
-          id: row.id
-        }
-      })
-    },
     handleDelete (index, row) {
       this.$confirm('此操作将永久删除该接口, 是否继续?', '删除接口', {
         type: 'warning',
@@ -331,7 +343,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         this.$axios({
-          url: '/api/v1/interface/delete',
+          url: '/api/v1/suite/delete',
           method: 'post',
           data: JSON.stringify({
             id_list: [row.id]
@@ -340,12 +352,20 @@ export default {
             'Content-Type': 'application/json;'
           }
         }).then((res) => {
-          this.refresh()
-          this.$message({
-            type: 'success',
-            message: '删除成功!',
-            center: true
-          })
+          if (res.data.status === 0) {
+            this.refresh()
+            this.$message({
+              type: 'success',
+              message: '删除成功!',
+              center: true
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.message,
+              center: true
+            })
+          }
         })
       }).catch(() => {
         this.$message({
@@ -354,26 +374,6 @@ export default {
           center: true
         })
       })
-    },
-    selectedTeamProject (value) {
-      this.team = value.team
-      this.project = value.project
-      this.refresh()
-    },
-    handleSelectionChange (value) {
-      const index = []
-      value.forEach((val, idx) => {
-        this.data.forEach((v, i) => {
-          if (val.id === v.id) {
-            index.push(i)
-          }
-        })
-      })
-      this.cases = []
-      const temp = index.sort()
-      for (const i in temp) {
-        this.cases.push(this.data[temp[i]].id)
-      }
     }
   }
 }

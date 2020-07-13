@@ -1,19 +1,5 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="4">
-        <TeamProjectCascader v-on:selectedTeamProject="selectedTeamProject" />
-      </el-col>
-      <el-col :span="2" :offset="18">
-        <!-- <el-button
-          @click="createSuite"
-          type="primary"
-          plain
-        >
-          创建套件
-        </el-button> -->
-      </el-col>
-    </el-row>
     <el-table
       :data="data"
       @selection-change="handleSelectionChange"
@@ -141,11 +127,17 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
-import TeamProjectCascader from '~/components/TeamProjectCascader.vue'
+
 export default {
-  components: {
-    TeamProjectCascader
+  props: {
+    team: {
+      type: String,
+      default: ''
+    },
+    project: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
@@ -153,8 +145,6 @@ export default {
       total: 0,
       limit: 10,
       page: 0,
-      team: '',
-      project: '',
       cases: [],
       column: {},
       report: '',
@@ -165,23 +155,8 @@ export default {
   },
   mounted () {
     this.refresh()
-    document.body.ondrop = function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-    this.rowDrop()
   },
   methods: {
-    rowDrop () {
-      const tbody = document.querySelector('.el-table__body-wrapper tbody')
-      const _this = this
-      Sortable.create(tbody, {
-        onEnd ({ newIndex, oldIndex }) {
-          const currRow = _this.data.splice(oldIndex, 1)[0]
-          _this.data.splice(newIndex, 0, currRow)
-        }
-      })
-    },
     handleCurrentChange (value) {
       this.page = value - 1
       this.refresh()
@@ -354,11 +329,6 @@ export default {
           center: true
         })
       })
-    },
-    selectedTeamProject (value) {
-      this.team = value.team
-      this.project = value.project
-      this.refresh()
     },
     handleSelectionChange (value) {
       const index = []
