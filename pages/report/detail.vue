@@ -96,7 +96,7 @@
         >
           <template slot-scope="scope">
             <el-tag
-              :type="scope.row.status === 'passed' ? 'success' : 'error'"
+              :type="scope.row.status === true ? 'success' : 'danger'"
               disable-transitions
             >
               {{ scope.row.status }}
@@ -145,12 +145,11 @@ export default {
         .then((res) => {
           if (res.data.status === 0) {
             this.data = res.data.data
-            console.log(res.data.data)
             this.total = this.data.interface.total
             this.success = this.data.interface.passed
             this.failed = this.data.interface.failed
             this.error = this.data.interface.error
-            this.skip = this.data.skip
+            this.skip = this.data.interface.skiped
             this.percent = this.data.interface.percent.toFixed(0) + '%'
             // 这里是报告的详细数据。
             for (const name in this.data.detail) {
@@ -169,7 +168,7 @@ export default {
                   status: this.data.detail[name].result[index].status,
                   actual,
                   expect,
-                  operate: this.data.detail[name].result[index].operate
+                  operate: this.data.detail[name].result[index].operate || 'None'
                 })
               }
             }
@@ -214,7 +213,7 @@ export default {
               hc5: this.skip,
               hc6: this.percent
             })
-            if (this.fail_or_error) {
+            if (this.passed !== this.total) {
               this.$message({
                 type: 'error',
                 message: '测试报告中检测到断言失败或错误，请关注！',

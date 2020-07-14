@@ -1,22 +1,10 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="2" :offset="18">
-        <el-button
-          @click="createSuite"
-          type="primary"
-          size="small"
-          plain
-        >
-          创建套件
-        </el-button>
-      </el-col>
-    </el-row>
     <el-table
       :data="data"
       v-loading="loading"
       element-loading-text="拼命加载中"
-      style="width: 100%;"
+      style="width: 100%; box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)"
     >
       <el-table-column
         prop="id"
@@ -179,12 +167,9 @@ export default {
       column: {},
       report: '',
       variables: '',
-      loading: true,
+      loading: false,
       dialogFormVisible: false
     }
-  },
-  mounted () {
-    this.refresh()
   },
   methods: {
     createSuite () {
@@ -234,17 +219,12 @@ export default {
         })
       })
     },
-    refresh () {
+    refresh (data) {
       this.loading = true
       const params = {
+        ...data,
         limit: this.limit,
         offset: this.page * this.limit
-      }
-      if (this.team !== '') {
-        params.team = this.team
-      }
-      if (this.project !== '') {
-        params.project = this.project
       }
       this.$axios
         .post('/api/v1/suite/search', params)
@@ -262,7 +242,6 @@ export default {
               center: true
             })
           }
-          this.loading = false
         })
         .catch(() => {
           this.$message({
@@ -270,8 +249,8 @@ export default {
             message: '服务出错，请联系管理员',
             center: true
           })
-          this.loading = false
         })
+      this.loading = false
     },
     handleCurrentChange (value) {
       this.page = value - 1

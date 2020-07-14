@@ -9,7 +9,9 @@
           <i class="el-icon-folder" />
           <span>{{ option.name }}</span>
         </template>
-        <el-menu-item v-for="(item, ii) in option.items" :key="ii" :index="option.name + '-' + item">{{ item }}</el-menu-item>
+        <el-menu-item v-for="(item, ii) in option.items" :key="ii" :index="option.name + '-' + item">
+          {{ item }}
+        </el-menu-item>
       </el-submenu>
     </el-menu>
   </div>

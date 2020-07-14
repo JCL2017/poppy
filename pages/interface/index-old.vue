@@ -1,11 +1,25 @@
 <template>
   <div>
+    <el-row>
+      <el-col :span="4">
+        <TeamProjectCascader v-on:selectedTeamProject="selectedTeamProject" />
+      </el-col>
+      <el-col :span="2" :offset="18">
+        <!-- <el-button
+          @click="createSuite"
+          type="primary"
+          plain
+        >
+          创建套件
+        </el-button> -->
+      </el-col>
+    </el-row>
     <el-table
       :data="data"
       @selection-change="handleSelectionChange"
       v-loading="loading"
       element-loading-text="拼命加载中"
-      style="width: 100%; box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)"
+      style="width: 100%"
     >
       <el-table-column
         prop="id"
@@ -127,17 +141,11 @@
 </template>
 
 <script>
-
+import Sortable from 'sortablejs'
+import TeamProjectCascader from '~/components/TeamProjectCascader.vue'
 export default {
-  props: {
-    team: {
-      type: String,
-      default: ''
-    },
-    project: {
-      type: String,
-      default: ''
-    }
+  components: {
+    TeamProjectCascader
   },
   data () {
     return {
@@ -145,15 +153,35 @@ export default {
       total: 0,
       limit: 10,
       page: 0,
+      team: '',
+      project: '',
       cases: [],
       column: {},
       report: '',
       variables: '',
-      loading: false,
+      loading: true,
       dialogFormVisible: false
     }
   },
+  mounted () {
+    this.refresh()
+    document.body.ondrop = function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    this.rowDrop()
+  },
   methods: {
+    rowDrop () {
+      const tbody = document.querySelector('.el-table__body-wrapper tbody')
+      const _this = this
+      Sortable.create(tbody, {
+        onEnd ({ newIndex, oldIndex }) {
+          const currRow = _this.data.splice(oldIndex, 1)[0]
+          _this.data.splice(newIndex, 0, currRow)
+        }
+      })
+    },
     handleCurrentChange (value) {
       this.page = value - 1
       this.refresh()
@@ -200,12 +228,17 @@ export default {
         })
       })
     },
-    refresh (data) {
+    refresh () {
       this.loading = true
       const params = {
-        ...data,
         limit: this.limit,
         offset: this.page * this.limit
+      }
+      if (this.team !== '') {
+        params.team = this.team
+      }
+      if (this.project !== '') {
+        params.project = this.project
       }
       this.$axios
         .post('/api/v1/interface/search', params)
@@ -220,6 +253,7 @@ export default {
               center: true
             })
           }
+          this.loading = false
         })
         .catch(() => {
           this.$message({
@@ -227,8 +261,8 @@ export default {
             message: '服务出错，请联系管理员',
             center: true
           })
+          this.loading = false
         })
-      this.loading = false
     },
     handleRun (index, row) {
       this.dialogFormVisible = true
@@ -320,6 +354,11 @@ export default {
           center: true
         })
       })
+    },
+    selectedTeamProject (value) {
+      this.team = value.team
+      this.project = value.project
+      this.refresh()
     },
     handleSelectionChange (value) {
       const index = []
