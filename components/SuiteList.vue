@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-table
+      ref="suite"
       :data="data"
+      :height="tableHeight"
       v-loading="loading"
       element-loading-text="拼命加载中"
       style="width: 100%; box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)"
@@ -35,6 +37,7 @@
         label="名称"
         width="180"
         align="center"
+        show-overflow-tooltip
       />
       <el-table-column
         prop="type"
@@ -43,11 +46,11 @@
         align="center"
       />
       <el-table-column
-        :show-overflow-tooltip='true'
         prop="cases"
         label="用例"
         width="180"
         align="center"
+        show-overflow-tooltip
       />
       <!-- <el-table-column
         label="统计"
@@ -169,8 +172,14 @@ export default {
       report: '',
       variables: '',
       loading: false,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      tableHeight: 300
     }
+  },
+  mounted () {
+    this.$nextTick(function () {
+      this.tableHeight = window.innerHeight - this.$refs.suite.$el.offsetTop - 100
+    })
   },
   methods: {
     createSuite () {

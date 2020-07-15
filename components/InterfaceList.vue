@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-table
+      ref="interface"
       :data="data"
+      :height="tableHeight"
       @selection-change="handleSelectionChange"
       v-loading="loading"
       element-loading-text="拼命加载中"
@@ -26,6 +28,7 @@
         prop="name"
         label="用例"
         width="180"
+        show-overflow-tooltip
       />
       <el-table-column
         prop="method"
@@ -36,11 +39,13 @@
         prop="host"
         label="域名"
         width="180"
+        show-overflow-tooltip
       />
       <el-table-column
         prop="path"
         label="路径"
         width="180"
+        show-overflow-tooltip
       />
       <el-table-column
         prop="created"
@@ -150,8 +155,14 @@ export default {
       report: '',
       variables: '',
       loading: false,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      tableHeight: 300
     }
+  },
+  mounted () {
+    this.$nextTick(function () {
+      this.tableHeight = window.innerHeight - this.$refs.interface.$el.offsetTop - 100
+    })
   },
   methods: {
     handleCurrentChange (value) {

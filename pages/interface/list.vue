@@ -2,7 +2,11 @@
   <div class="container">
     <el-row :gutter="20">
       <el-col :span="4">
-        <el-tabs type="border-card">
+        <el-tabs
+          ref="tabs"
+          :height="tabHeight"
+          type="border-card"
+        >
           <el-tab-pane label="接口">
             <div style="margin-top: 15px;">
               <el-input v-model="searchInterfaceName" placeholder="请输入接口名" class="input-with-select" size="small">
@@ -62,8 +66,15 @@ export default {
       selectSuiteProject: '',
       selectInterfaceProject: '',
       searchSuiteName: '',
-      searchInterfaceName: ''
+      searchInterfaceName: '',
+      tabHeight: 300
     }
+  },
+  mounted () {
+    this.getTeamProject()
+    this.$nextTick(function () {
+      this.tabHeight = window.innerHeight - this.$refs.tabs.$el.offsetTop - 100
+    })
   },
   methods: {
     selectedSuiteTeamProject (value) {
