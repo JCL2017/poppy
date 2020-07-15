@@ -43,6 +43,7 @@
         align="center"
       />
       <el-table-column
+        :show-overflow-tooltip='true'
         prop="cases"
         label="用例"
         width="180"
