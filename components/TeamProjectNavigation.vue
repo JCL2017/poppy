@@ -3,6 +3,7 @@
     <el-menu
       @select="handleSelect"
       class="el-menu-vertical-demo"
+      unique-opened
     >
       <el-submenu v-for="(option, oi) in options" :key="oi" :index="option.name">
         <template slot="title">
