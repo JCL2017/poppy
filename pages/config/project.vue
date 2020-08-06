@@ -206,6 +206,21 @@ export default {
               center: true
             })
           }
+        }).catch((error) => {
+          if (error.response) {
+            const message = JSON.stringify(error.response.data.message)
+            this.$message({
+              type: 'error',
+              message,
+              center: true
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '未知错误，请联系管理员！',
+              center: true
+            })
+          }
         })
       }).catch(() => {
         this.$message({
