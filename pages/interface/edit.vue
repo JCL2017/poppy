@@ -652,10 +652,10 @@ export default {
           this.response = res.data.data
         }
         this.dialogSubmitFormVisible = false
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -776,13 +776,12 @@ export default {
           }
           this.loading = false
         })
-        .catch(() => {
+        .catch((error) => {
           this.$message({
             type: 'error',
-            message: '服务出错，请联系管理员',
+            message: error.response.data.message,
             center: true
           })
-          this.loading = false
         })
     }
   }

@@ -76,10 +76,10 @@ export default {
             center: true
           })
         }
-      }).catch(function () {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })

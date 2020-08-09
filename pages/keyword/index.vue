@@ -128,10 +128,10 @@ export default {
           }
           this.loading = false
         })
-        .catch(() => {
+        .catch((error) => {
           this.$message({
             type: 'error',
-            message: '服务出错，请联系管理员',
+            message: error.response.data.message,
             center: true
           })
           this.loading = false
@@ -175,6 +175,12 @@ export default {
               center: true
             })
           }
+        }).catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message,
+            center: true
+          })
         })
       }).catch(() => {
         this.$message({

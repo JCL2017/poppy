@@ -652,10 +652,10 @@ export default {
           this.response = res.data.data
         }
         this.dialogSubmitFormVisible = false
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -719,10 +719,10 @@ export default {
           this.response = res.data.data
         }
         this.dialogSubmitFormVisible = false
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })

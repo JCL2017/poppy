@@ -113,10 +113,10 @@ export default {
             center: true
           })
         }
-      }).catch((res) => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务异常，请联系管理员！',
+          message: error.response.data.message,
           center: true
         })
       })

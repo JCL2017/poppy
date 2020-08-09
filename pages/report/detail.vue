@@ -275,10 +275,10 @@ export default {
             })
           }
         })
-        .catch(() => {
+        .catch((error) => {
           this.$message({
             type: 'error',
-            message: '服务出错，请联系管理员',
+            message: error.response.data.message,
             center: true
           })
         })

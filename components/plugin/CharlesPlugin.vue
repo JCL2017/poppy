@@ -144,11 +144,11 @@ export default {
             center: true
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
         loading.close()
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })

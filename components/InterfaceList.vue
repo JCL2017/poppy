@@ -203,10 +203,10 @@ export default {
           })
         }
         this.dialogFormVisible = false
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '修改开关状态时发生错误!',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -231,11 +231,10 @@ export default {
               center: true
             })
           }
-        })
-        .catch(() => {
+        }).catch((error) => {
           this.$message({
             type: 'error',
-            message: '服务出错，请联系管理员',
+            message: error.response.data.message,
             center: true
           })
         })
@@ -285,10 +284,10 @@ export default {
           })
         }
         this.dialogFormVisible = false
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '运行接口用例时发生错误!',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -321,6 +320,12 @@ export default {
           this.$message({
             type: 'success',
             message: '删除成功!',
+            center: true
+          })
+        }).catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message,
             center: true
           })
         })
