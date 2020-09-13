@@ -26,6 +26,12 @@ export default {
         .post('/api/v1/team/aggregate', { cascader: null })
         .then((res) => {
           this.options = res.data.data
+        }).catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message,
+            center: true
+          })
         })
     },
     handleChange (value) {

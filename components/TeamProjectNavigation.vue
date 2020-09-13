@@ -47,6 +47,12 @@ export default {
               items: res.data.data[team]
             })
           }
+        }).catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message,
+            center: true
+          })
         })
     }
   }

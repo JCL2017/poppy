@@ -30,7 +30,7 @@
             <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
           </div>
           <div class="text item">
-            <el-image :src="image.src" style="width: 100%; height: 100%;" />
+            <el-image :src="image.src" style="width: 100%;" />
           </div>
         </el-card>
       </el-col>
@@ -65,7 +65,7 @@ export default {
   margin-bottom: 20px;
 }
 
-img {
-  height: 50%;
+.el-image {
+  height: 256px;
 }
 </style>

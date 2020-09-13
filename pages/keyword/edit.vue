@@ -112,6 +112,12 @@ export default {
               center: true
             })
           }
+        }).catch((error) => {
+          this.$message({
+            type: 'error',
+            message: error.response.data.message,
+            center: true
+          })
         })
     },
     handleDebug () {
@@ -141,10 +147,10 @@ export default {
             center: true
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -178,10 +184,10 @@ export default {
             center: true
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务器偷懒了！',
+          message: error.response.data.message,
           center: true
         })
       })

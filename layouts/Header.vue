@@ -49,7 +49,7 @@
       数据看板
     </el-menu-item>
     <el-menu-item v-if="join" index="keep">
-      <a href="https://github.com/taoyanli0808/clover" target="_blank">
+      <a href="https://github.com/52clover" target="_blank">
         加入我们
       </a>
     </el-menu-item>

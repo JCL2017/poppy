@@ -206,11 +206,26 @@ export default {
               center: true
             })
           }
+        }).catch((error) => {
+          if (error.response) {
+            const message = JSON.stringify(error.response.data.message)
+            this.$message({
+              type: 'error',
+              message,
+              center: true
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '未知错误，请联系管理员！',
+              center: true
+            })
+          }
         })
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
-          type: 'info',
-          message: '已取消删除',
+          type: 'error',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -245,10 +260,10 @@ export default {
             center: true
           })
         }
-      }).catch(() => {
+      }).catch((error) => {
         this.$message({
           type: 'error',
-          message: '服务端错误，请联系管理员！',
+          message: error.response.data.message,
           center: true
         })
       })
@@ -275,6 +290,12 @@ export default {
             center: true
           })
         }
+      }).catch((error) => {
+        this.$message({
+          type: 'error',
+          message: error.response.data.message,
+          center: true
+        })
       })
     },
     refresh () {
@@ -298,10 +319,10 @@ export default {
           this.data = res.data.data
           this.loading = false
         })
-        .catch(() => {
+        .catch((error) => {
           this.$message({
             type: 'error',
-            message: '服务出错，请联系管理员',
+            message: error.response.data.message,
             center: true
           })
           this.loading = false
